@@ -1,0 +1,14 @@
+# Maven - Ignore the build folder (compiled code)
+target/
+
+# VS Code - Ignore editor settings
+.vscode/
+.settings/
+.classpath
+.project
+bin/
+
+# Java - Ignore temporary files
+*.class
+*.log
+*.jar
