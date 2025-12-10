@@ -36,7 +36,7 @@ public class User
         this.hashedPassword = hashedPassword;
     }
 
-    public void setTicketsBooked(List<String> ticketsBooked) {
+    public void setTicketsBooked(List<Ticket> ticketsBooked) {
         this.ticketsBooked = ticketsBooked;
     }
 
