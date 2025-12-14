@@ -8,16 +8,16 @@ public class Ticket
     private String source;
     private String destination;
     private Date dateOfTravel;
-    private Train train;
+    // private Train train;
 
-    public Ticket(String ticketId,String userId,String source,String destination,Date dateOfTravel, Train train)
+    public Ticket(String ticketId,String userId,String source,String destination,Date dateOfTravel)
     {
         this.ticketId = ticketId;
         this.userId = userId;
         this.source = source;
         this.destination = destination;
         this.dateOfTravel = dateOfTravel;
-        this.train = train;
+        // this.train = train;
     }
 
 
