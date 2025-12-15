@@ -8,8 +8,10 @@ import java.util.Map;
 
 import com.irctc.entities.Train;
 import com.irctc.entities.User;
+import com.irctc.services.BookingService;
 import com.irctc.services.TrainService;
 import com.irctc.services.UserBookingService;
+import com.irctc.services.impl.BookingServiceImpl;
 import com.irctc.services.impl.TrainServiceImpl;
 import com.irctc.services.impl.UserBookingServiceImpl;
 
@@ -20,10 +22,12 @@ public class Main {
 
         Scanner ss = new Scanner(System.in);
         int option = 0;
+        User currentUser = null;
 
         //Initialising the service
         UserBookingService userBookingService = new UserBookingServiceImpl() ;
         TrainService trainService = new TrainServiceImpl();
+        BookingService bookingService = new BookingServiceImpl();
 
         //Testing dummy rains
         List<String> stops = List.of("Delhi", "Agra", "Bhopal", "Mumbai"); // Order matters!
@@ -39,6 +43,7 @@ public class Main {
             System.out.println("3. Fetch Bookings");
             System.out.println("4. Search Trains");
             System.out.println("5. Exit");
+            System.out.println("6. Book Ticket");
 
 
             option = ss.nextInt();
@@ -62,6 +67,14 @@ public class Main {
                         System.out.println("Login Successfull!");
                     }
                     else System.out.println("Login Failed");
+
+                    if (userBookingService.loginUser()) {
+                        System.out.println("Login Successful!");
+                        
+                        // CRITICAL STEP: Fetch the user so Main knows who is logged in
+                        // You need to add 'getUser()' to UserBookingService interface/impl
+                        currentUser = userBookingService.getUser(); 
+                    }
                     break;
 
                 case 3:
@@ -88,11 +101,44 @@ public class Main {
                 case 5:
                     System.out.println("Exiting the App");
                     break;
+
+                case 6:
+                    System.out.println("Book a Ticket");
+                    
+                    if (currentUser == null) {
+                        System.out.println("Please login first!");
+                        break;
+                    }
+
+                    System.out.println("Enter Train Number to book:");
+                    String trainNum = ss.next();
+                    
+                    // 2. Find the train
+                    Train trainToBook = trainService.getTrain(trainNum);
+                    
+                    if (trainToBook == null) {
+                        System.out.println("Train not found!");
+                        break;
+                    }
+
+                    // 3. Book the seat
+                    System.out.println("Enter Passenger Name:");
+                    String passengerName = ss.next();
+                    List<String> passengers = new ArrayList<>();
+                    passengers.add(passengerName);
+                    
+                    // 4. Call the service
+                    Boolean bookingSuccess = bookingService.bookTicket(currentUser, trainToBook, passengers);
+                    
+                    if (bookingSuccess) {
+                        System.out.println("Booking Successful! Check 'Fetch Bookings' to see your ticket.");
+                    } else {
+                        System.out.println("Booking Failed.");
+                    }
+                    break;
                 default:
                     System.out.println("Enter valid choice");
             }
-
-
         }
     }
 }

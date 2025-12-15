@@ -26,6 +26,7 @@ public class UserBookingServiceImpl implements UserBookingService
     {
         this.userList = new ArrayList<>();
     }
+    
 
     // Overriding the login function
     @Override
@@ -86,6 +87,11 @@ public class UserBookingServiceImpl implements UserBookingService
         return false;
     }
 
+    @Override
+    public User getUser() {
+        return this.user;
+    }
+    
     //A function to print the users currently in db
     public List<User> getUsers()
     {

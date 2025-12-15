@@ -28,6 +28,16 @@ public class TrainServiceImpl implements TrainService
         .collect(Collectors.toList()) ;
     }
     
+
+    @Override
+    public Train getTrain(String trainNumber) {
+        for (Train t : trainList) {
+            if (t.getTrainNo().equals(trainNumber)) {
+                return t;
+            }
+        }
+        return null; // this null will be handled in main
+}
     private boolean validTrain(Train train ,String source,String destination)
     {
         List<String> stations = train.getStations();
