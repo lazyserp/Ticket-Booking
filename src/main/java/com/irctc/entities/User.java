@@ -17,7 +17,8 @@ public class User
         this.name = name;
         this.password = password;
         this.hashedPassword = hashedPassword;
-        this.ticketsBooked = ticketsBooked;
+        //if null is passed creating an empty to list to prevetn nullPointerExcep
+        this.ticketsBooked = (ticketsBooked != null) ? ticketsBooked : new ArrayList<>();
 
     } 
 
