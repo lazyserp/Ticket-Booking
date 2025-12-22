@@ -2,88 +2,69 @@ package com.irctc.services.impl;
 
 import com.irctc.entities.User;
 import com.irctc.services.UserBookingService;
-import java.util.*;
-import java.util.function.*;
+import com.irctc.dao.UserDAO;
+import java.util.Scanner;
 
-public class UserBookingServiceImpl implements UserBookingService
-{
-    //User object that denotes current user
-    private User user;
+public class UserBookingServiceImpl implements UserBookingService {
 
-    //temp database
-    private List<User> userList;
+    private User user; // Stores the currently logged-in user
+    private UserDAO userDAO; // Used to talk to the Database
 
-    // paramterized constructor is used if a user is based when object is instantiated,
-    // this initialises our temporary database; 
-    public UserBookingServiceImpl(User user)
-    {
+    // Constructor 1: If we already have a user (e.g. passed from Main)
+    public UserBookingServiceImpl(User user) {
         this.user = user;
-        this.userList = new ArrayList<>();
+        this.userDAO = new UserDAO();
     }
 
-    //Default constructor is called even if a user is not passed, this is to initialise the db 
-    public UserBookingServiceImpl()
-    {
-        this.userList = new ArrayList<>();
+    // Constructor 2: Default constructor (Normal startup)
+    public UserBookingServiceImpl() {
+        this.userDAO = new UserDAO();
     }
-    
 
-    // Overriding the login function
     @Override
-    public Boolean loginUser()
-    {
-        Scanner ss = new Scanner(System.in);
-        System.out.println("Enter Name: ");
-        String name = ss.next();
-
+    public Boolean loginUser() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter Username: ");
+        String name = scanner.next();
+        
         System.out.println("Enter Password: ");
-        String password = ss.next();
+        String password = scanner.next();
 
-
-        //using Streams ( Java 8 )
-        Optional<User> foundUser = userList.stream().filter(user -> user.getName().equals(name) && user.getPassword().equals(password)).findFirst();
-        if (foundUser.isPresent())
-        {
-            this.user = foundUser.get();
-            return true;
+        // Fetch user from Database instead of a local List
+        User userFromDb = userDAO.getUserByName(name);
+        
+        if (userFromDb != null) {
+            // Compare passwords
+            if (userFromDb.getPassword().equals(password)) {
+                this.user = userFromDb; // Login success: Set the session
+                return true;
+            }
         }
-
-        //Same thing but with normal function
-        // for(var i : userList)
-        // {
-        //     if (i.getName().equals(name) && i.getPassword().equals(password))
-        //         {
-        //             this.user = i;
-        //             return true;
-
-        //         }
-        // }
         return false;
     }
 
-    //Overriding the signup function
     @Override
-    public Boolean signUpUser(User user)
-    {
-        try{
-            userList.add(user);
+    public Boolean signUpUser(User user) {
+        try {
+            userDAO.saveUser(user);
             return true;
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return false;
         }
     }
 
     @Override 
-    public void fetchBookings()
-    {
-        user.printTickets();
+    public void fetchBookings() {
+        if (user != null) {
+            user.printTickets();
+        } else {
+            System.out.println("No user logged in.");
+        }
     }
 
     @Override
-    public Boolean cancelTicket(String ticketId)
-    {
+    public Boolean cancelTicket(String ticketId) {
+        // Future implementation
         return false;
     }
 
@@ -91,13 +72,4 @@ public class UserBookingServiceImpl implements UserBookingService
     public User getUser() {
         return this.user;
     }
-    
-    //A function to print the users currently in db
-    public List<User> getUsers()
-    {
-        return userList;
-    }
-
-
 }
-
