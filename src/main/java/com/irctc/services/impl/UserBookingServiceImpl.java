@@ -2,34 +2,27 @@ package com.irctc.services.impl;
 
 import com.irctc.entities.User;
 import com.irctc.services.UserBookingService;
-import com.irctc.dao.UserDAO;
-import java.util.Scanner;
+import com.irctc.dao.IUserDAO;
+import com.irctc.dao.InMemoryUserDAO;
 
 public class UserBookingServiceImpl implements UserBookingService {
 
     private User user; // Stores the currently logged-in user
-    private UserDAO userDAO; // Used to talk to the Database
+    private IUserDAO userDAO; // Used to talk to the Database
 
     // Constructor 1: If we already have a user (e.g. passed from Main)
     public UserBookingServiceImpl(User user) {
         this.user = user;
-        this.userDAO = new UserDAO();
+        this.userDAO = new InMemoryUserDAO();
     }
 
     // Constructor 2: Default constructor (Normal startup)
     public UserBookingServiceImpl() {
-        this.userDAO = new UserDAO();
+        this.userDAO = new InMemoryUserDAO();
     }
 
     @Override
-    public Boolean loginUser() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter Username: ");
-        String name = scanner.next();
-        
-        System.out.println("Enter Password: ");
-        String password = scanner.next();
-
+    public Boolean loginUser(String name, String password) {
         // Fetch user from Database instead of a local List
         User userFromDb = userDAO.getUserByName(name);
         

@@ -8,9 +8,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class UserDAO {
+public class UserDAO implements IUserDAO {
 
     // Save a User to the Database
+    @Override
     public void saveUser(User user) {
         // The SQL template with '?' placeholders
         String sql = "INSERT INTO users (user_id, name, password, hashed_password, tickets_booked) VALUES (?, ?, ?, ?, ?)";
@@ -36,6 +37,7 @@ public class UserDAO {
         }
     }
 
+    @Override
     public User getUserByName(String name) {
         String sql = "SELECT * FROM users WHERE name = ?";
         
@@ -48,10 +50,10 @@ public class UserDAO {
             if (rs.next()) {
                 // We found a user! Map the DB row to our Java Object
                 return new User(
+                    rs.getString("user_id"),
                     rs.getString("name"),
                     rs.getString("password"), // In real app, check hashed
                     rs.getString("hashed_password"),
-                    rs.getString("user_id"),
                     new ArrayList<>() // We will fix ticket fetching later
                 );
             }

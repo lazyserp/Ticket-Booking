@@ -34,7 +34,7 @@ public class Main {
         Train t1 = new Train(UUID.randomUUID().toString(), "12345", new ArrayList<>(), times, stops);
         trainService.addTrain(t1);
         
-        while ( option != 4 )
+        while ( option != 5 )
         {
             System.out.println("Choose Option");
             System.out.println("1. Sign Up");
@@ -61,18 +61,20 @@ public class Main {
                     break;
 
                 case 2:
-                    if ( userBookingService.loginUser())
-                    {
-                        System.out.println("Login Successfull!");
-                    }
-                    else System.out.println("Login Failed");
+                    System.out.println("Enter Username: ");
+                    String name = ss.next();
 
-                    if (userBookingService.loginUser()) {
+                    System.out.println("Enter Password: ");
+                    String password = ss.next();
+
+                    if (userBookingService.loginUser(name, password)) {
                         System.out.println("Login Successful!");
                         
                         // CRITICAL STEP: Fetch the user so Main knows who is logged in
                         // You need to add 'getUser()' to UserBookingService interface/impl
                         currentUser = userBookingService.getUser(); 
+                    } else {
+                        System.out.println("Login Failed");
                     }
                     break;
 
