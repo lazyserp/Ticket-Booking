@@ -4,7 +4,7 @@ import com.irctc.entities.User;
 
 public interface UserBookingService
 {
-    Boolean loginUser();
+    Boolean loginUser(String name, String password);
     Boolean signUpUser(User user);
     void fetchBookings();
     User getUser();
