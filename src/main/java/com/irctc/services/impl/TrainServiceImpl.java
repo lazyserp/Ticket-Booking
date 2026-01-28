@@ -7,13 +7,11 @@ import java.util.stream.Collectors;
 import com.irctc.entities.Train;
 import com.irctc.services.TrainService;
 
-public class TrainServiceImpl implements TrainService
-{
+public class TrainServiceImpl implements TrainService {
     private List<Train> trainList;
 
-    public TrainServiceImpl()
-    {
-        this.trainList = new ArrayList<>(); //will be loaded from DB
+    public TrainServiceImpl() {
+        this.trainList = new ArrayList<>(); // will be loaded from DB
     }
 
     @Override
@@ -24,22 +22,19 @@ public class TrainServiceImpl implements TrainService
     @Override
     public List<Train> searchTrain(String source, String destination) {
         return trainList.stream()
-        .filter(train -> validTrain(train,source,destination))
-        .collect(Collectors.toList()) ;
+                .filter(train -> validTrain(train, source, destination))
+                .collect(Collectors.toList());
     }
-    
 
     @Override
     public Train getTrain(String trainNumber) {
-        for (Train t : trainList) {
-            if (t.getTrainNo().equals(trainNumber)) {
-                return t;
-            }
-        }
-        return null; // this null will be handled in main
-}
-    private boolean validTrain(Train train ,String source,String destination)
-    {
+        return trainList.stream()
+                .filter(t -> t.getTrainNo().equals(trainNumber))
+                .findFirst()
+                .orElse(null); // Explicitly returning null for now, will replace with Exceptions later
+    }
+
+    private boolean validTrain(Train train, String source, String destination) {
         List<String> stations = train.getStations();
 
         int sourceIndex = stations.indexOf(source);
