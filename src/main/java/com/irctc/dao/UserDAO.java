@@ -48,12 +48,12 @@ public class UserDAO {
             if (rs.next()) {
                 // We found a user! Map the DB row to our Java Object
                 return new User(
-                        rs.getString("name"),
-                        rs.getString("password"), // In real app, check hashed
-                        rs.getString("hashed_password"),
-                        rs.getString("user_id"),
-                        new ArrayList<>() // We will fix ticket fetching later
-                );
+                                rs.getString("user_id"),         // Correct: 1st arg is userId
+                                rs.getString("name"),            // Correct: 2nd arg is name
+                                rs.getString("password"),        // Correct: 3rd arg is password
+                                rs.getString("hashed_password"), // Correct: 4th arg is hash
+                                new ArrayList<>()                // Tickets (Empty for now)
+                            );
             }
         } catch (SQLException e) {
             e.printStackTrace();
