@@ -3,6 +3,7 @@ package com.irctc.services.impl;
 import com.irctc.entities.User;
 import com.irctc.services.UserBookingService;
 import com.irctc.dao.UserDAO;
+import com.irctc.util.PasswordUtil;
 import java.util.Scanner;
 
 public class UserBookingServiceImpl implements UserBookingService {
@@ -26,17 +27,17 @@ public class UserBookingServiceImpl implements UserBookingService {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter Username: ");
         String name = scanner.next();
-        
-        System.out.println("Enter Password: ");
-        String password = scanner.next();
 
-        // Fetch user from Database instead of a local List
+        System.out.println("Enter Password: ");
+        String password = scanner.next(); // Plain text input
+
+        // Fetch user from Database
         User userFromDb = userDAO.getUserByName(name);
-        
+
         if (userFromDb != null) {
-            // Compare passwords
-            if (userFromDb.getPassword().equals(password)) {
-                this.user = userFromDb; // Login success: Set the session
+            // Validate using Hash
+            if (PasswordUtil.checkPassword(password, userFromDb.getHashedPassword())) {
+                this.user = userFromDb;
                 return true;
             }
         }
@@ -46,6 +47,15 @@ public class UserBookingServiceImpl implements UserBookingService {
     @Override
     public Boolean signUpUser(User user) {
         try {
+            // Hash the password before saving
+            // Note: We assume the controller initially put the plain password in the
+            // 'password' field.
+            String plainPassword = user.getPassword();
+            String hashedPassword = PasswordUtil.hashPassword(plainPassword);
+
+            user.setHashedPassword(hashedPassword);
+            user.setPassword("PROTECTED"); // Clear plain text from memory/object
+
             userDAO.saveUser(user);
             return true;
         } catch (Exception e) {
@@ -53,7 +63,7 @@ public class UserBookingServiceImpl implements UserBookingService {
         }
     }
 
-    @Override 
+    @Override
     public void fetchBookings() {
         if (user != null) {
             user.printTickets();
